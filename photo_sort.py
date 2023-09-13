@@ -8,22 +8,25 @@ from dataclasses import dataclass
 @dataclass
 class PhotoSortConfig:
     """Class to hold the configuration and lambdas."""
-    src_root_path: Path = Path('.').absolute()
-    dst_root_path: Path = Path('.').absolute()
+    src_root_path: Path = Path(".").absolute()
+    dst_root_path: Path = Path(".").absolute()
+    duplicates_path: Path = Path("./duplicates")
     copy_func: object = lambda file_in, file_out: shutil.copy(file_in, file_out)
 
 
 def parse_arguments() -> PhotoSortConfig:
     """Parse command line option and return cofig dataclass."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('src_root_dir', type=str, help='source root directory')
-    parser.add_argument('dst_root_dir', type=str, help='destination root directory')
-    parser.add_argument('-c', '--copy', action='store_true', default=False, help='uses copy instead move for files')
+    parser.add_argument("src_root_dir", type=str, help="source root directory")
+    parser.add_argument("dst_root_dir", type=str, help="destination root directory")
+    parser.add_argument("-c", "--copy", action="store_true", default=False, help="uses copy instead move for files")
+    parser.add_argument("-d", "--duplicates-folder", type=str, default="duplicates", help="alternative folder name to save duplicate pictures in destination root")
     args = parser.parse_args()
 
     photo_sort_config = PhotoSortConfig()
     photo_sort_config.src_root_path = Path(args.src_root_dir).absolute()
     photo_sort_config.dst_root_path = Path(args.dst_root_dir).absolute()
+    photo_sort_config.duplicates_path = photo_sort_config.dst_root_path / args.duplicates_folder
 
 
     if args.copy == True:
