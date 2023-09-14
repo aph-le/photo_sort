@@ -60,11 +60,6 @@ def create_pic_folder(config: PhotoSortConfig, date) -> str:
     new_path = config.dst_root_path / new_path
     if new_path.exists() == False:
         new_path.mkdir(parents=True)
-    #if not os.path.isdir(year):
-        #os.mkdir(year)
-    #if not os.path.isdir(year + '/' + month):
-        #os.mkdir(year + '/' + month)
-    #return year + '/' + month
     return(str(new_path))
 
 
