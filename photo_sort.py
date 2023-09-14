@@ -2,7 +2,7 @@ import os, hashlib, shutil, argparse
 from pathlib import Path
 from PIL import Image
 from PIL.ExifTags import TAGS
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -11,6 +11,7 @@ class PhotoSortConfig:
     src_root_path: Path = Path(".").absolute()
     dst_root_path: Path = Path(".").absolute()
     duplicates_path: Path = Path("./duplicates")
+    file_type_list: list = field(default_factory=lambda: [".jpg", ".jpeg"])
     copy_func: object = lambda file_in, file_out: shutil.copy(file_in, file_out)
 
 
@@ -101,7 +102,7 @@ def main():
     print('Root Path: ' + str(root_path))
 
     for path in root_path.rglob("*"):
-        if path.is_file() == True and path.suffix == ".jpg":
+        if path.is_file() == True and path.suffix in config.file_type_list:
             filename = str(path)
             print(filename)
             picture_meta_dict = get_exif(filename)
