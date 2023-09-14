@@ -54,12 +54,16 @@ def create_pic_folder(config: PhotoSortConfig, date) -> str:
     """Create folder structure if not existing."""
     year = date.split(':')[0]
     month = date.split(':')[1]
-    if config.duplicates_path.exists() == False:
-        config.duplicates_path.mkdir(parents=True)
+
     new_path = f"{year}/{year}_{month}"
     new_path = config.dst_root_path / new_path
+
     if new_path.exists() == False:
         new_path.mkdir(parents=True)
+
+    if config.duplicates_path.exists() == False:
+        config.duplicates_path.mkdir(parents=True)
+
     return(str(new_path))
 
 
