@@ -50,17 +50,22 @@ def get_exif(file_name) -> dict:
     return exif_dict
 
 
-def create_pic_folder(config, date):
+def create_pic_folder(config: PhotoSortConfig, date) -> str:
     """Create folder structure if not existing."""
     year = date.split(':')[0]
     month = date.split(':')[1]
-    if not os.path.isdir("duplicates"):
-        os.mkdir("duplicates")
-    if not os.path.isdir(year):
-        os.mkdir(year)
-    if not os.path.isdir(year + '/' + month):
-        os.mkdir(year + '/' + month)
-    return year + '/' + month
+    if config.duplicates_path.exists() == False:
+        config.duplicates_path.mkdir(parents=True)
+    new_path = f"{year}/{year}_{month}"
+    new_path = config.dst_root_path / new_path
+    if new_path.exists() == False:
+        new_path.mkdir(parents=True)
+    #if not os.path.isdir(year):
+        #os.mkdir(year)
+    #if not os.path.isdir(year + '/' + month):
+        #os.mkdir(year + '/' + month)
+    #return year + '/' + month
+    return(str(new_path))
 
 
 def check_unique_file(config, file, dir) -> str:
