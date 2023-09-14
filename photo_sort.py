@@ -63,7 +63,7 @@ def create_pic_folder(config: PhotoSortConfig, date) -> str:
     return(str(new_path))
 
 
-def check_unique_file(config, file, dir) -> str:
+def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
     """Create a hashlist from the working directory a see if the file is already in the hashlist."""
     unique = dict()
     print(os.listdir(dir))
