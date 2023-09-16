@@ -38,6 +38,29 @@ def parse_arguments() -> PhotoSortConfig:
     return photo_sort_config
 
 
+def safe_copy(config: PhotoSortConfig, src_file: str, dest_file: str):
+    """Copy or Move file safely by checking if destination file exist and append -X if case
+    is already exists.
+    
+    :param PhotoSortConfig config: Config which contains the actual copy method.
+    :param str src_file: source including complete path.
+    :param str dst_file: desired destination file name.
+    """
+    dest_file_path = Path(dest_file)
+    dest_file_dir = dest_file_path.parent
+    if not dest_file_path.exists():
+        config.copy_func(src_file, dest_file)
+    else:
+        dest_file_dir = dest_file_path.parent
+        dest_file_ext = dest_file_path.suffix
+        dest_file_base = dest_file_path.stem
+        dest_file_add = 1
+        while Path.joinpath(dest_file_dir, f"{dest_file_base}_{dest_file_add}{dest_file_ext}").exists():
+            dest_file_add = dest_file_add + 1
+        dest_file_path = Path.joinpath(dest_file_dir, f"{dest_file_base}_{dest_file_add}{dest_file_ext}")
+        config.copy_func(src_file, str(dest_file_path))
+
+
 def get_exif(file_name) -> dict:
     """Get the image file exif information as dictionary."""
     exif_dict = {}
@@ -116,9 +139,10 @@ def main():
                 pass
             if picture_date_time != "":
                 dest_dir = create_pic_folder(config, picture_date_time)
+                safe_copy(config, filename, filename)
                 new_file = check_unique_file(config, filename, dest_dir)
                 if "" != new_file:
-                    config.copy_func(filename, new_file)
+                    safe_copy(config, filename, new_file)
 
 
 if __name__ == '__main__':
