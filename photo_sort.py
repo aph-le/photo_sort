@@ -12,7 +12,7 @@ class PhotoSortConfig:
     dst_root_path: Path = Path(".").absolute()
     duplicates_path: Path = Path("./duplicates")
     file_type_list: list = field(default_factory=lambda: [".jpg", ".jpeg"])
-    copy_func: object = lambda file_in, file_out: shutil.copy(file_in, file_out)
+    copy_func: object = lambda file_in, file_out: shutil.copy2(file_in, file_out)
 
 
 def parse_arguments() -> PhotoSortConfig:
@@ -31,7 +31,7 @@ def parse_arguments() -> PhotoSortConfig:
 
 
     if args.copy == True:
-        photo_sort_config.copy_func = lambda file_in, file_out: shutil.copy(file_in, file_out)
+        photo_sort_config.copy_func = lambda file_in, file_out: shutil.copy2(file_in, file_out)
     else:
         photo_sort_config.copy_func = lambda file_in, file_out: shutil.move(file_in, file_out)
 
@@ -70,20 +70,26 @@ def create_pic_folder(config: PhotoSortConfig, date) -> str:
 
 def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
     """Create a hashlist from the working directory a see if the file is already in the hashlist."""
-    unique = dict()
-    print(os.listdir(dir))
-    for path in Path(dir).rglob("*"):
-        if path.is_file()  == True and path.suffix in config.file_type_list:
-            print(str(path))
-            filehash = hashlib.md5(open(str(path),'rb').read()).hexdigest()
-            if filehash not in unique:
-               print('not in hashtable ' + str(path.name))
-               unique[filehash] = str(path.name)
+    if not hasattr(check_unique_file, "unique_" + dir):
+        setattr(check_unique_file, "unique_" + dir, dict())
+        unique = getattr(check_unique_file, "unique_" + dir)
+        print(os.listdir(dir))
+        for path in Path(dir).rglob("*"):
+            if path.is_file()  == True and path.suffix in config.file_type_list:
+                print(str(path))
+                filehash = hashlib.md5(open(str(path),'rb').read()).hexdigest()
+                if filehash not in unique:
+                    print('not in hashtable ' + str(path.name))
+                    unique[filehash] = str(path.name)
+                    setattr(check_unique_file, "unique_" + dir, unique)
+    unique = getattr(check_unique_file, "unique_" + dir)
     print(unique)
     filehash = hashlib.md5(open(file, 'rb').read()).hexdigest()
     if filehash not in unique:
         print('------ not in hashtable ' + file)
         filename = str(Path(file).name)
+        unique[filehash] = filename
+        setattr(check_unique_file, "unique_" + dir, unique)
         return dir + '/' + filename
     else:
         print(file + ' is a duplicate in folder ' + unique[filehash])
