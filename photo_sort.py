@@ -139,7 +139,6 @@ def main():
                 pass
             if picture_date_time != "":
                 dest_dir = create_pic_folder(config, picture_date_time)
-                safe_copy(config, filename, filename)
                 new_file = check_unique_file(config, filename, dest_dir)
                 if "" != new_file:
                     safe_copy(config, filename, new_file)
