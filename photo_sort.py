@@ -72,18 +72,13 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
     """Create a hashlist from the working directory a see if the file is already in the hashlist."""
     unique = dict()
     print(os.listdir(dir))
-    for filename in os.listdir(dir):
-        print(dir + '/../' +filename)
-        if os.path.isfile('./' + dir + '/' + filename):
-            print(dir + '/++/' +filename)
-            if '.jpg' in filename:
-                filehash = hashlib.md5(open('./' + dir + '/' + filename, 'rb').read()).hexdigest()
-                if filehash not in unique:
-                    print('not in hashtable ' + filename)
-                    unique[filehash] = filename
-            else:
-                # should never happen
-                return str()
+    for path in Path(dir).rglob("*"):
+        if path.is_file()  == True and path.suffix in config.file_type_list:
+            print(str(path))
+            filehash = hashlib.md5(open(str(path),'rb').read()).hexdigest()
+            if filehash not in unique:
+               print('not in hashtable ' + str(path.name))
+               unique[filehash] = str(path.name)
     print(unique)
     filehash = hashlib.md5(open(file, 'rb').read()).hexdigest()
     if filehash not in unique:
@@ -91,8 +86,8 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
         filename = str(Path(file).name)
         return dir + '/' + filename
     else:
-        print(filename + ' is a duplicate in folder ' + unique[filehash])
-        return str(config.duplicates_path / filename)
+        print(file + ' is a duplicate in folder ' + unique[filehash])
+        return str(config.duplicates_path / Path(file).name)
 
 
 def main():
