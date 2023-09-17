@@ -30,7 +30,6 @@ def parse_arguments() -> PhotoSortConfig:
     photo_sort_config.dst_root_path = Path(args.dst_root_dir).absolute()
     photo_sort_config.duplicates_path = photo_sort_config.dst_root_path / args.duplicates_folder
 
-
     if args.copy == True:
         photo_sort_config.copy_func = lambda file_in, file_out: shutil.copy2(file_in, file_out)
     else:
@@ -67,9 +66,9 @@ def safe_copy(config: PhotoSortConfig, src_file: str, dest_file: str):
         dest_file_ext = dest_file_path.suffix
         dest_file_base = dest_file_path.stem
         dest_file_add = 1
-        while Path.joinpath(dest_file_dir, f"{dest_file_base}_{dest_file_add}{dest_file_ext}").exists():
+        while Path.joinpath(dest_file_dir, f"{dest_file_base}({dest_file_add}){dest_file_ext}").exists():
             dest_file_add = dest_file_add + 1
-        dest_file_path = Path.joinpath(dest_file_dir, f"{dest_file_base}_{dest_file_add}{dest_file_ext}")
+        dest_file_path = Path.joinpath(dest_file_dir, f"{dest_file_base}({dest_file_add}){dest_file_ext}")
         config.copy_func(src_file, str(dest_file_path))
 
 
@@ -100,15 +99,22 @@ def create_pic_folder(config: PhotoSortConfig, date: datetime) -> str:
     return(str(new_path))
 
 
-def create_pic_name(config: PhotoSortConfig, file_name_path: str, date) -> str:
+def create_pic_name(config: PhotoSortConfig, file_name: str, date: datetime) -> str:
     """Create a filename for the copy file according to the configuration.
     
     :param PhotoSortConfig config: Config which contains the actual copy method.
-    :param str file_name_path: old file name include full path
-    :param str date: date as base element for the new name 
+    :param str file_name: old file name include full path
+    :param datetime date: date as base element for the new name 
     """
 
-    pass
+    file_name_path = Path(file_name)
+    file_path = file_name_path.parent
+    file_ext = file_name_path.suffix
+
+    new_name = date.strftime("%Y-%m-%d_%H-%M-%S")
+    file_renamed = str(Path.joinpath(file_path,f"{new_name}{file_ext}"))
+
+    return file_renamed
 
 
 def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
@@ -160,6 +166,7 @@ def main():
                 date_time = parse_exif_date(picture_date_time)
                 dest_dir = create_pic_folder(config, date_time)
                 new_file = check_unique_file(config, filename, dest_dir)
+                new_file = create_pic_name(config, new_file, date_time)
                 if "" != new_file:
                     safe_copy(config, filename, new_file)
 
