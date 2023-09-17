@@ -44,31 +44,10 @@ def parse_exif_date(date_str: str) -> datetime:
     
     :param str date_str: contains descrition of date and time
     """
-    date_parts = date_str.strip().split()
+    # todo check for diffrent input strings
+    date_obj = datetime.strptime(date_str,"%Y:%m:%d %H:%M:%S")
 
-    if len(date_parts) == 0:
-        return None
-    if len(date_parts) >= 1:
-        date_str = date_parts[0]
-    if len(date_parts) >= 2:
-        time_str = date_parts[1]
-
-    date_parts = date_str.split(":")
-
-    # check if there are 3 entries for year, month and day
-    if len(date_parts) != 3:
-        return None
-
-    year = date_parts[0]
-    month = date_parts[1]
-    day = date_parts[2]
-
-
-    print(date_parts)
-    pass
-
-    
-
+    return date_obj
 
 
 def safe_copy(config: PhotoSortConfig, src_file: str, dest_file: str):
@@ -107,12 +86,9 @@ def get_exif(file_name) -> dict:
     return exif_dict
 
 
-def create_pic_folder(config: PhotoSortConfig, date) -> str:
+def create_pic_folder(config: PhotoSortConfig, date: datetime) -> str:
     """Create folder structure if not existing."""
-    year = date.split(':')[0]
-    month = date.split(':')[1]
-
-    new_path = f"{year}/{year}_{month}"
+    new_path = f"{date.year}/{date.strftime('%Y_%m')}"
     new_path = config.dst_root_path / new_path
 
     if new_path.exists() == False:
@@ -140,7 +116,6 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
     if not hasattr(check_unique_file, "unique_" + dir):
         setattr(check_unique_file, "unique_" + dir, dict())
         unique = getattr(check_unique_file, "unique_" + dir)
-        print(os.listdir(dir))
         for path in Path(dir).rglob("*"):
             if path.is_file()  == True and path.suffix in config.file_type_list:
                 print(str(path))
@@ -182,8 +157,8 @@ def main():
             else:
                 pass
             if picture_date_time != "":
-                parse_exif_date(picture_date_time)
-                dest_dir = create_pic_folder(config, picture_date_time)
+                date_time = parse_exif_date(picture_date_time)
+                dest_dir = create_pic_folder(config, date_time)
                 new_file = check_unique_file(config, filename, dest_dir)
                 if "" != new_file:
                     safe_copy(config, filename, new_file)
