@@ -124,23 +124,19 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
         unique = getattr(check_unique_file, "unique_" + dir)
         for path in Path(dir).rglob("*"):
             if path.is_file()  == True and path.suffix in config.file_type_list:
-                print(str(path))
                 filehash = hashlib.md5(open(str(path),'rb').read()).hexdigest()
                 if filehash not in unique:
-                    print('not in hashtable ' + str(path.name))
                     unique[filehash] = str(path.name)
                     setattr(check_unique_file, "unique_" + dir, unique)
     unique = getattr(check_unique_file, "unique_" + dir)
     print(unique)
     filehash = hashlib.md5(open(file, 'rb').read()).hexdigest()
     if filehash not in unique:
-        print('------ not in hashtable ' + file)
         filename = str(Path(file).name)
         unique[filehash] = filename
         setattr(check_unique_file, "unique_" + dir, unique)
         return dir + '/' + filename
     else:
-        print(file + ' is a duplicate in folder ' + unique[filehash])
         return str(config.duplicates_path / Path(file).name)
 
 
