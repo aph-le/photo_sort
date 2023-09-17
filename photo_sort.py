@@ -12,6 +12,7 @@ class PhotoSortConfig:
     src_root_path: Path = Path(".").absolute()
     dst_root_path: Path = Path(".").absolute()
     duplicates_path: Path = Path("./duplicates")
+    file_rename_format: str = "%Y-%m-%d_%H-%M-%S"
     file_type_list: list = field(default_factory=lambda: [".jpg", ".jpeg", ".JPG"])
     copy_func: object = lambda file_in, file_out: shutil.copy2(file_in, file_out)
 
@@ -23,12 +24,14 @@ def parse_arguments() -> PhotoSortConfig:
     parser.add_argument("dst_root_dir", type=str, help="destination root directory")
     parser.add_argument("-c", "--copy", action="store_true", default=False, help="uses copy instead move for files")
     parser.add_argument("-d", "--duplicates-folder", type=str, default="duplicates", help="alternative folder name to save duplicate pictures in destination root")
+    parser.add_argument("-r", "--rename-format", type=str, default="%Y-%m-%d_%H-%M-%S", help="format secifier for renaming the file, see python datetime")
     args = parser.parse_args()
 
     photo_sort_config = PhotoSortConfig()
     photo_sort_config.src_root_path = Path(args.src_root_dir).absolute()
     photo_sort_config.dst_root_path = Path(args.dst_root_dir).absolute()
     photo_sort_config.duplicates_path = photo_sort_config.dst_root_path / args.duplicates_folder
+    photo_sort_config.file_rename_format = args.rename_format
 
     if args.copy == True:
         photo_sort_config.copy_func = lambda file_in, file_out: shutil.copy2(file_in, file_out)
@@ -111,7 +114,7 @@ def create_pic_name(config: PhotoSortConfig, file_name: str, date: datetime) -> 
     file_path = file_name_path.parent
     file_ext = file_name_path.suffix
 
-    new_name = date.strftime("%Y-%m-%d_%H-%M-%S")
+    new_name = date.strftime(config.file_rename_format)
     file_renamed = str(Path.joinpath(file_path,f"{new_name}{file_ext}"))
 
     return file_renamed
