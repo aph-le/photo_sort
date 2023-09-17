@@ -4,6 +4,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from dataclasses import dataclass, field
 from datetime import datetime
+from alive_progress import alive_bar as progress_bar
 
 
 @dataclass
@@ -148,24 +149,27 @@ def main():
     root_path = config.src_root_path 
     print('Root Path: ' + str(root_path))
 
-    for path in root_path.rglob("*"):
-        if path.is_file() == True and path.suffix in config.file_type_list:
-            filename = str(path)
-            picture_meta_dict = get_exif(filename)
-            picture_date_time = ""
-            if 'DateTime' in picture_meta_dict:
-                picture_date_time = picture_meta_dict['DateTime']
-            if 'DateTimeOriginal' in picture_meta_dict:
-                picture_date_time = picture_meta_dict['DateTimeOriginal']
-            else:
-                pass
-            if picture_date_time != "":
-                date_time = parse_exif_date(picture_date_time)
-                dest_dir = create_pic_folder(config, date_time)
-                new_file = check_unique_file(config, filename, dest_dir)
-                new_file = create_pic_name(config, new_file, date_time)
-                if "" != new_file:
-                    safe_copy(config, filename, new_file)
+    with progress_bar(len(list(root_path.rglob("*")))) as prog_bar:
+
+        for path in root_path.rglob("*"):
+            if path.is_file() == True and path.suffix in config.file_type_list:
+                filename = str(path)
+                picture_meta_dict = get_exif(filename)
+                picture_date_time = ""
+                if 'DateTime' in picture_meta_dict:
+                    picture_date_time = picture_meta_dict['DateTime']
+                if 'DateTimeOriginal' in picture_meta_dict:
+                    picture_date_time = picture_meta_dict['DateTimeOriginal']
+                else:
+                    pass
+                if picture_date_time != "":
+                    date_time = parse_exif_date(picture_date_time)
+                    dest_dir = create_pic_folder(config, date_time)
+                    new_file = check_unique_file(config, filename, dest_dir)
+                    new_file = create_pic_name(config, new_file, date_time)
+                    if "" != new_file:
+                        safe_copy(config, filename, new_file)
+            prog_bar()
 
 
 if __name__ == '__main__':
