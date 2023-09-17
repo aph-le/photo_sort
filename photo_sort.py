@@ -12,7 +12,7 @@ class PhotoSortConfig:
     src_root_path: Path = Path(".").absolute()
     dst_root_path: Path = Path(".").absolute()
     duplicates_path: Path = Path("./duplicates")
-    file_type_list: list = field(default_factory=lambda: [".jpg", ".jpeg"])
+    file_type_list: list = field(default_factory=lambda: [".jpg", ".jpeg", ".JPG"])
     copy_func: object = lambda file_in, file_out: shutil.copy2(file_in, file_out)
 
 
@@ -129,7 +129,6 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
                     unique[filehash] = str(path.name)
                     setattr(check_unique_file, "unique_" + dir, unique)
     unique = getattr(check_unique_file, "unique_" + dir)
-    print(unique)
     filehash = hashlib.md5(open(file, 'rb').read()).hexdigest()
     if filehash not in unique:
         filename = str(Path(file).name)
@@ -149,7 +148,6 @@ def main():
     for path in root_path.rglob("*"):
         if path.is_file() == True and path.suffix in config.file_type_list:
             filename = str(path)
-            print(filename)
             picture_meta_dict = get_exif(filename)
             picture_date_time = ""
             if 'DateTime' in picture_meta_dict:
