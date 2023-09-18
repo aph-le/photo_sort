@@ -1,4 +1,5 @@
 import hashlib, shutil, argparse
+import logging
 from pathlib import Path
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -154,6 +155,7 @@ def main():
         for path in root_path.rglob("*"):
             if path.is_file() == True and path.suffix in config.file_type_list:
                 filename = str(path)
+                prog_bar.text(f"Item: {filename}")
                 picture_meta_dict = get_exif(filename)
                 picture_date_time = ""
                 if 'DateTime' in picture_meta_dict:
@@ -173,5 +175,7 @@ def main():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger("alive_progress")
     main()
 
