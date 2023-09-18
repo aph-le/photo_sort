@@ -1,4 +1,12 @@
-import hashlib, shutil, argparse
+"""
+photo_sort.py
+
+author: Alexander Philipp
+
+"""
+import hashlib
+import shutil
+import argparse
 import logging
 from pathlib import Path
 from PIL import Image
@@ -35,7 +43,7 @@ def parse_arguments() -> PhotoSortConfig:
     photo_sort_config.duplicates_path = photo_sort_config.dst_root_path / args.duplicates_folder
     photo_sort_config.file_rename_format = args.rename_format
 
-    if args.copy == True:
+    if args.copy is True:
         photo_sort_config.copy_func = lambda file_in, file_out: shutil.copy2(file_in, file_out)
     else:
         photo_sort_config.copy_func = lambda file_in, file_out: shutil.move(file_in, file_out)
@@ -82,7 +90,7 @@ def get_exif(file_name) -> dict:
     exif_dict = {}
     image = Image.open(file_name)
     info = image.getexif()
-    if info == None:
+    if info is None:
         return dict()
     for tag, value in info.items():
         decoded = TAGS.get(tag, tag)
@@ -95,10 +103,10 @@ def create_pic_folder(config: PhotoSortConfig, date: datetime) -> str:
     new_path = f"{date.year}/{date.strftime('%Y_%m')}"
     new_path = config.dst_root_path / new_path
 
-    if new_path.exists() == False:
+    if new_path.exists() is False:
         new_path.mkdir(parents=True)
 
-    if config.duplicates_path.exists() == False:
+    if config.duplicates_path.exists() is False:
         config.duplicates_path.mkdir(parents=True)
 
     return(str(new_path))
@@ -128,7 +136,7 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
         setattr(check_unique_file, "unique_" + dir, dict())
         unique = getattr(check_unique_file, "unique_" + dir)
         for path in Path(dir).rglob("*"):
-            if path.is_file()  == True and path.suffix in config.file_type_list:
+            if path.is_file() is True and path.suffix in config.file_type_list:
                 filehash = hashlib.md5(open(str(path),'rb').read()).hexdigest()
                 if filehash not in unique:
                     unique[filehash] = str(path.name)
@@ -145,6 +153,7 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
 
 
 def main():
+    """Main function"""
     config = parse_arguments()
 
     root_path = config.src_root_path 
@@ -153,7 +162,7 @@ def main():
     with progress_bar(len(list(root_path.rglob("*")))) as prog_bar:
 
         for path in root_path.rglob("*"):
-            if path.is_file() == True and path.suffix in config.file_type_list:
+            if path.is_file() is True and path.suffix in config.file_type_list:
                 filename = str(path)
                 prog_bar.text(f"Item: {filename}")
                 picture_meta_dict = get_exif(filename)
