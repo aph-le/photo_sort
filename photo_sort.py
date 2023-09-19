@@ -9,7 +9,7 @@ import shutil
 import argparse
 import logging
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime as Datetime
 from dataclasses import dataclass, field
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -76,13 +76,13 @@ def parse_arguments() -> PhotoSortConfig:
     return photo_sort_config
 
 
-def parse_exif_date(date_str: str) -> datetime:
+def parse_exif_date(date_str: str) -> Datetime:    
     """Parses the given string to create and return a datetime element.
 
     :param str date_str: contains descrition of date and time
     """
     # todo check for diffrent input strings
-    date_obj = datetime.strptime(date_str, "%Y:%m:%d %H:%M:%S")
+    date_obj = Datetime.strptime(date_str, "%Y:%m:%d %H:%M:%S")
 
     return date_obj
 
@@ -127,7 +127,7 @@ def get_exif(file_name) -> dict:
     return exif_dict
 
 
-def create_pic_folder(config: PhotoSortConfig, date: datetime) -> str:
+def create_pic_folder(config: PhotoSortConfig, date: Datetime) -> str:
     """Create folder structure if not existing."""
     new_path = f"{date.year}/{date.strftime('%Y_%m')}"
     new_path = config.dst_root_path / new_path
@@ -141,7 +141,7 @@ def create_pic_folder(config: PhotoSortConfig, date: datetime) -> str:
     return str(new_path)
 
 
-def create_pic_name(config: PhotoSortConfig, file_name: str, date: datetime) -> str:
+def create_pic_name(config: PhotoSortConfig, file_name: str, date: Datetime) -> str:
     """Create a filename for the copy file according to the configuration.
 
     :param PhotoSortConfig config: Config which contains the actual copy method.
