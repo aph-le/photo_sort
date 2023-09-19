@@ -9,10 +9,10 @@ import shutil
 import argparse
 import logging
 from pathlib import Path
+from datetime import datetime
+from dataclasses import dataclass, field
 from PIL import Image
 from PIL.ExifTags import TAGS
-from dataclasses import dataclass, field
-from datetime import datetime
 from alive_progress import alive_bar as progress_bar
 
 
@@ -109,7 +109,7 @@ def create_pic_folder(config: PhotoSortConfig, date: datetime) -> str:
     if config.duplicates_path.exists() is False:
         config.duplicates_path.mkdir(parents=True)
 
-    return(str(new_path))
+    return str(new_path)
 
 
 def create_pic_name(config: PhotoSortConfig, file_name: str, date: datetime) -> str:
@@ -119,7 +119,6 @@ def create_pic_name(config: PhotoSortConfig, file_name: str, date: datetime) -> 
     :param str file_name: old file name include full path
     :param datetime date: date as base element for the new name 
     """
-
     file_name_path = Path(file_name)
     file_path = file_name_path.parent
     file_ext = file_name_path.suffix
