@@ -104,13 +104,9 @@ def safe_copy(config: PhotoSortConfig, src_file: str, dest_file: str):
         dest_file_ext = dest_file_path.suffix
         dest_file_base = dest_file_path.stem
         dest_file_add = 1
-        while Path.joinpath(
-            dest_file_dir, f"{dest_file_base}({dest_file_add}){dest_file_ext}"
-        ).exists():
+        while Path.joinpath(dest_file_dir, f"{dest_file_base}({dest_file_add}){dest_file_ext}").exists():
             dest_file_add = dest_file_add + 1
-        dest_file_path = Path.joinpath(
-            dest_file_dir, f"{dest_file_base}({dest_file_add}){dest_file_ext}"
-        )
+        dest_file_path = Path.joinpath(dest_file_dir, f"{dest_file_base}({dest_file_add}){dest_file_ext}")
         config.copy_func(src_file, str(dest_file_path))
 
 
@@ -176,8 +172,8 @@ def check_unique_file(config: PhotoSortConfig, file, dir) -> str:
         unique[filehash] = filename
         setattr(check_unique_file, "unique_" + dir, unique)
         return dir + "/" + filename
-    else:
-        return str(config.duplicates_path / Path(file).name)
+
+    return str(config.duplicates_path / Path(file).name)
 
 
 def main():
@@ -196,7 +192,7 @@ def main():
                 picture_date_time = ""
                 if "DateTime" in picture_meta_dict:
                     picture_date_time = picture_meta_dict["DateTime"]
-                if "DateTimeOriginal" in picture_meta_dict:
+                elif "DateTimeOriginal" in picture_meta_dict:
                     picture_date_time = picture_meta_dict["DateTimeOriginal"]
                 else:
                     pass
