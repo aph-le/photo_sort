@@ -110,8 +110,13 @@ def safe_copy(config: PhotoSortConfig, src_file: str, dest_file: str):
         config.copy_func(src_file, str(dest_file_path))
 
 
-def get_exif(file_name) -> dict:
-    """Get the image file exif information as dictionary."""
+def get_exif(file_name: str) -> dict:
+    """
+    Get the image file exif information as dictionary.
+
+    :param str file_name: image file to get the exif data
+    :return dict: dictionary with exif tags
+    """
     exif_dict = {}
     image = Image.open(file_name)
     info = image.getexif()
@@ -124,7 +129,13 @@ def get_exif(file_name) -> dict:
 
 
 def create_pic_folder(config: PhotoSortConfig, date: Datetime) -> str:
-    """Create folder structure if not existing."""
+    """
+    Create folder structure if not existing.
+
+    :param PhotoSortConfig config: 
+    :param Datetime date: 
+    :return str:
+    """    
     new_path = f"{date.year}/{date.strftime('%Y_%m')}"
     new_path = config.dst_root_path / new_path
 
