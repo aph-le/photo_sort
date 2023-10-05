@@ -76,7 +76,7 @@ def parse_arguments() -> PhotoSortConfig:
     return photo_sort_config
 
 
-def parse_exif_date(date_str: str) -> Datetime:    
+def parse_exif_date(date_str: str) -> Datetime:
     """Parses the given string to create and return a datetime element.
 
     :param str date_str: contains descrition of date and time
@@ -132,10 +132,10 @@ def create_pic_folder(config: PhotoSortConfig, date: Datetime) -> str:
     """
     Create folder structure if not existing.
 
-    :param PhotoSortConfig config: 
-    :param Datetime date: 
+    :param PhotoSortConfig config:
+    :param Datetime date:
     :return str:
-    """    
+    """
     new_path = f"{date.year}/{date.strftime('%Y_%m')}"
     new_path = config.dst_root_path / new_path
 
