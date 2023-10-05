@@ -64,11 +64,7 @@ def parse_arguments() -> PhotoSortConfig:
     )
     photo_sort_config.file_rename_format = args.rename_format
 
-    if args.copy is True:
-        photo_sort_config.copy_func = lambda file_in, file_out: shutil.copy2(
-            file_in, file_out
-        )
-    else:
+    if args.copy is False:
         photo_sort_config.copy_func = lambda file_in, file_out: shutil.move(
             file_in, file_out
         )
