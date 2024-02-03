@@ -3,6 +3,8 @@ photo_sort.py
 
 author: Alexander Philipp
 
+$Id$
+
 """
 import hashlib
 import shutil
