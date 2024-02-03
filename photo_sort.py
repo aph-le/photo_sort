@@ -1,5 +1,6 @@
 """
 photo_sort.py
+A photo file sorting script.
 
 author: Alexander Philipp
 
