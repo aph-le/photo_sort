@@ -15,6 +15,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from alive_progress import alive_bar as progress_bar
 
+_LOGGER = logging.getLogger(__name__)
 
 @dataclass
 class PhotoSortConfig:
@@ -117,7 +118,7 @@ def get_exif(file_name: str) -> dict:
     image = Image.open(file_name)
     info = image.getexif()
     if info is None:
-        return dict()
+        return {}
     for tag, value in info.items():
         decoded = TAGS.get(tag, tag)
         exif_dict[decoded] = value
@@ -188,7 +189,7 @@ def main():
     config = parse_arguments()
 
     root_path = config.src_root_path
-    print("Root Path: " + str(root_path))
+    _LOGGER.info("Root Path: " + str(root_path))
 
     with progress_bar(len(list(root_path.rglob("*")))) as prog_bar:
         for path in root_path.rglob("*"):
@@ -214,6 +215,6 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger("alive_progress")
+    #logging.basicConfig(level=logging.INFO)
+    #logger = logging.getLogger("alive_progress")
     main()
