@@ -8,5 +8,5 @@ There is a command line help implemented. For help call:
     python photo_sort.py -h
 
 ### Command Line Parameters
-    -h --help
+    -h --help  : prints command line help 
 
